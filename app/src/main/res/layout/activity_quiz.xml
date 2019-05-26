@@ -8,12 +8,40 @@
     android:layout_height="match_parent"
     tools:context=".activity.QuizActivity">
 
+
+    <RelativeLayout
+        android:id="@+id/rela_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/tv_number_answer"
+            android:textSize="17dp"
+            android:textColor="@android:color/black"
+            android:text="17/20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:background="@drawable/bg_button_finish"
+            android:textColor="@android:color/white"
+            android:id="@+id/btn_finish"
+            android:text="Finish"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+
+
     <TextView
+        android:layout_below="@+id/rela_header"
         android:id="@+id/tv_question"
         android:textSize="20dp"
         android:textColor="#000"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -73,8 +101,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Next"
+        android:textColor="@android:color/white"
         android:id="@+id/btnNext"
-        android:layout_width="wrap_content"
+        android:background="@drawable/bg_button_next"
+        android:layout_width="200dp"
         android:layout_height="wrap_content" />
 
 </RelativeLayout>

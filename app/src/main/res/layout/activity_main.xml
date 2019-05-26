@@ -12,24 +12,16 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#bdbdbd"
+        android:background="#f5f5f5"
         android:orientation="vertical"
         tools:context=".activity.MainActivity">
-
-        <com.smarteist.autoimageslider.SliderLayout
-            android:id="@+id/imageSlider"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_alignParentTop="true"
-            tools:ignore="MissingConstraints" />
-
         <GridView
             android:id="@+id/gridview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:padding="10dp"
             android:horizontalSpacing="10dp"
-            android:numColumns="3"
+            android:layout_weight="1"
             android:verticalSpacing="10dp" />
     </LinearLayout>
 

@@ -2,7 +2,6 @@ package com.luyendd.learntoeic.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.obj.ResultTest;
+import com.luyendd.learntoeic.obj.Topic;
 import com.luyendd.learntoeic.obj.Voca;
 import com.luyendd.learntoeic.obj.VocaQuiz;
 import com.luyendd.learntoeic.utils.Const;
@@ -27,17 +27,19 @@ import java.util.Random;
 
 public class QuizActivity extends AppCompatActivity implements View.OnClickListener {
 
-    int topic_id = 1;
+    int topic_id = 1, pass = 0, notPass = 0;
+    Topic topic;
     private final String TAG = "QuizActivity";
     List<VocaQuiz> vocaQuizs = new ArrayList<>();
     Random random;
     int positionQuiz = 2;
-    TextView tvQuestions, tvAnswer1, tvAnswer2, tvAnswer3, tvAnswer4;
-    int numQuestion = 0, numCorrect = 0;
-    Button btnNext;
+    TextView tvQuestions, tvAnswer1, tvAnswer2, tvAnswer3, tvAnswer4, tvNumberAnswer;
+    int numQuestion = 0, numCorrect = 0, numAnswer = 0;
+    Button btnNext, btnFinish;
     boolean isAnswer = false;
     ConnectDataBase connectDataBase;
     List<Voca> vocaList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,13 +56,16 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 vocaList = connectDataBase.getVocaFromTopic(topic_id);
             }
+            topic = connectDataBase.getTopicById(topic_id);
+            pass = topic.getPass();
+            notPass = topic.getNotPass();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         initDataQuiz();
     }
 
-    private void initDataQuiz(){
+    private void initDataQuiz() {
 
         new Thread(new Runnable() {
             @Override
@@ -68,17 +73,19 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 random = new Random();
                 tvQuestions = findViewById(R.id.tv_question);
                 btnNext = findViewById(R.id.btnNext);
+                btnFinish = findViewById(R.id.btn_finish);
                 tvAnswer1 = findViewById(R.id.tv_answer_1);
                 tvAnswer2 = findViewById(R.id.tv_answer_2);
                 tvAnswer3 = findViewById(R.id.tv_answer_3);
                 tvAnswer4 = findViewById(R.id.tv_answer_4);
+                tvNumberAnswer = findViewById(R.id.tv_number_answer);
 
+                btnFinish.setOnClickListener(QuizActivity.this);
                 btnNext.setOnClickListener(QuizActivity.this);
                 tvAnswer1.setOnClickListener(QuizActivity.this);
                 tvAnswer2.setOnClickListener(QuizActivity.this);
                 tvAnswer3.setOnClickListener(QuizActivity.this);
                 tvAnswer4.setOnClickListener(QuizActivity.this);
-
                 vocaQuizs.clear();
                 for (Voca voca : vocaList) {
                     vocaQuizs.add(new VocaQuiz(voca.getId(), voca.getVocabulary(), voca.getTranslate(), false));
@@ -92,7 +99,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void setQuestion(){
+    private void setQuestion() {
 
         isAnswer = false;
 
@@ -109,13 +116,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, "End Quiz" + numCorrect + "/" + numQuestion);
                     Toast.makeText(QuizActivity.this,
                             "End Quiz" + numCorrect + "/" + numQuestion, Toast.LENGTH_SHORT).show();
-
-                    boolean isInsert = connectDataBase.insertResultData(new ResultTest(topic_id, numCorrect, numQuestion));
-                    Log.d(TAG, "[Insert] : " + isInsert);
-                    Intent i = new Intent(QuizActivity.this, StatisticResultTestActivity.class);
-                    i.putExtra(Const.TOPIC_ID, topic_id);
-                    startActivity(i);
-                    finish();
+                    // them ket qua vao bang result test
+                    updateStatistic();
                 }
             });
 
@@ -124,18 +126,18 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
 
         setPositionQuiz();
         VocaQuiz voca = vocaQuizs.get(positionQuiz);
+        numAnswer++;
+        tvNumberAnswer.setText(numAnswer + "/" + vocaList.size());
         tvQuestions.setText(voca.getVocabulary());
         setAnswerQuiz();
-
-
     }
 
     private void setPositionQuiz() {
         positionQuiz = random.nextInt(vocaQuizs.size());
-        if (vocaQuizs.get(positionQuiz).isExitsQuiz()){
+        if (vocaQuizs.get(positionQuiz).isExitsQuiz()) {
             setPositionQuiz();
-        }else {
-            numQuestion ++;
+        } else {
+            numQuestion++;
             vocaQuizs.get(positionQuiz).setExitsQuiz(true);
         }
     }
@@ -148,7 +150,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             secondPos = random.nextInt(vocaQuizs.size());
         }
 
-        while(thirdPos == secondPos || thirdPos == firstPos) {
+        while (thirdPos == secondPos || thirdPos == firstPos) {
             thirdPos = random.nextInt(vocaQuizs.size());
         }
 
@@ -179,37 +181,64 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 setQuestion();
                 break;
 
-            case R.id.tv_answer_1 :
+            case R.id.tv_answer_1:
                 textViewClick(tvAnswer1);
                 break;
 
-            case R.id.tv_answer_2 :
+            case R.id.tv_answer_2:
                 textViewClick(tvAnswer2);
                 break;
 
-            case R.id.tv_answer_3 :
+            case R.id.tv_answer_3:
                 textViewClick(tvAnswer3);
                 break;
 
-            case R.id.tv_answer_4 :
+            case R.id.tv_answer_4:
                 textViewClick(tvAnswer4);
+                break;
+
+            case R.id.btn_finish:
+                updateStatistic();
                 break;
         }
     }
 
+    /*
+     * Neu dung > 49% la pass => update pass = pass+1 vao table topic
+     * else khong pass => update not_pass = notpass + 1 vao table topic
+     * */
+    private void updateStatistic() {
+        double temp = numCorrect * 1.0 / vocaQuizs.size();
+        if (temp > 0.49) {
+            pass += 1;
+        } else {
+            notPass += 1;
+        }
+        topic.setPass(pass);
+        topic.setNotPass(notPass);
+        connectDataBase.UpdateTopicStatistical(topic);
+        boolean isInsert = connectDataBase.insertResultData(new ResultTest(topic_id, numCorrect, vocaQuizs.size()));
+        Log.d(TAG, "[Insert] : " + isInsert);
+        Intent i = new Intent(QuizActivity.this, StatisticResultTestActivity.class);
+        i.putExtra(Const.TOPIC_ID, topic_id);
+        startActivity(i);
+        finish();
+    }
+
     private void textViewClick(final TextView tv) {
         if (vocaQuizs.get(positionQuiz).getTranslate().toString() == tv.getText().toString()) {
-            new CountDownTimer(2000, 1000) {
-
-                public void onTick(long millisUntilFinished) {
-                    tv.setBackgroundColor(Color.GREEN);
-                }
-
-                public void onFinish() {
-                    setQuestion();
-                }
-
-            }.start();
+//            new CountDownTimer(2000, 1000) {
+//
+//                public void onTick(long millisUntilFinished) {
+//                    tv.setBackgroundColor(Color.GREEN);
+//                }
+//
+//                public void onFinish() {
+//                    setQuestion();
+//                }
+//
+//            }.start();
+            tv.setBackgroundColor(Color.GREEN);
             if (!isAnswer) numCorrect++;
             Toast.makeText(QuizActivity.this, "Correct", Toast.LENGTH_SHORT).show();
         } else {
@@ -222,7 +251,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);

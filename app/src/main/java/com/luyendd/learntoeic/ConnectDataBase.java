@@ -115,12 +115,47 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
             topicList.add(new Topic(cursor.getInt(0),
-                    cursor.getString(1), cursor.getString(2)));
+                    cursor.getString(1), cursor.getString(2),
+                    cursor.getInt(3), cursor.getInt(4),
+                    cursor.getInt(5)));
+//
             cursor.moveToNext();
         }
         close();
         return topicList;
 
+    }
+
+    public List<Topic> getListTopicFavourite() throws SQLException {
+        openDataBase();
+        List<Topic> topicList = new ArrayList<>();
+        String sql = "select * from topic where favourite = 1";
+        Cursor cursor = myDataBase.rawQuery(sql, null);
+        cursor.moveToFirst();
+        Log.d("ABC", ""+ cursor.getColumnCount());
+        while (!cursor.isAfterLast()){
+            topicList.add(new Topic(cursor.getInt(0),
+                    cursor.getString(1), cursor.getString(2),
+                    cursor.getInt(3), cursor.getInt(4),
+                    cursor.getInt(5)));
+//
+            cursor.moveToNext();
+        }
+        close();
+        return topicList;
+
+    }
+
+    public void UpdateTopicFavourite(Topic topic) {
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        ContentValues cv = new ContentValues();
+        cv.put("favourite", topic.getFavourite());
+        myDataBase.update("topic", cv, "id="+topic.getId(), null);
+        close();
     }
 
     public List<Voca> getVocaFromTopic(int topic) throws SQLException {
@@ -252,4 +287,57 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         return vocaList;
     }
 
+    public List<Topic> getListTopicStatistical(){
+        List<Topic> topics = new ArrayList<>();
+        try {
+            openDataBase();
+            String sql = "select * from topic order by favourite DESC";
+            Cursor cursor = myDataBase.rawQuery(sql, null);
+            cursor.moveToFirst();
+            Log.d("ABC", ""+ cursor.getColumnCount());
+            while (!cursor.isAfterLast()){
+                topics.add(new Topic(cursor.getInt(0),
+                        cursor.getString(1), cursor.getString(2),
+                        cursor.getInt(3), cursor.getInt(4),
+                        cursor.getInt(5)));
+                cursor.moveToNext();
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return topics;
+    }
+
+    public void UpdateTopicStatistical(Topic topic) {
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        ContentValues cv = new ContentValues();
+        cv.put("pass", topic.getPass());
+        cv.put("not_pass", topic.getNotPass());
+
+        myDataBase.update("topic", cv, "id="+topic.getId(), null);
+        close();
+    }
+
+    public Topic getTopicById(int _id) throws SQLException {
+        openDataBase();
+        Topic topic = null;
+        String sql = "select * from topic where id = '" + _id + "'" ;
+        Cursor cursor = myDataBase.rawQuery(sql, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            topic = new Topic(cursor.getInt(0),
+                    cursor.getString(1), cursor.getString(2),
+                    cursor.getInt(3), cursor.getInt(4),
+                    cursor.getInt(5));
+//
+            cursor.moveToNext();
+        }
+        close();
+        return topic;
+    }
 }

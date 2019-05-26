@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">Vocabulary</string>
+    <string name="app_name">Học từ vựng</string>
     <string name="Open">Open</string>
     <string name="Close">Close</string>
+    <string name="topic">Chủ đề</string>
+    <string name="favourite">Yêu thích</string>
+    <string name="alarm_notice">Nhắc nhở học từ</string>
+    <string name="alarm_voca">Nhắc nhở từ </string>
 </resources>

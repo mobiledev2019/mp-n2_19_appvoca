@@ -4,12 +4,10 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.SettingTimeActivity"></activity>
+        <activity android:name=".activity.TopicActivity"></activity>
+        <activity android:name=".activity.SettingTimeActivity" />
         <activity android:name=".activity.StatisticResultTestActivity" />
         <activity android:name=".activity.QuizActivity" />
         <activity android:name=".activity.VocaDetailsActivity" />
@@ -30,8 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".service.SchedulingListFavouriteService"/>
-        <service android:name=".service.SchedulingVocaService"/>
+
+        <service android:name=".service.SchedulingListFavouriteService" />
+        <service android:name=".service.SchedulingVocaService" />
     </application>
 
 </manifest>

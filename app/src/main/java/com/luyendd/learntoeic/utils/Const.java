@@ -3,6 +3,8 @@ package com.luyendd.learntoeic.utils;
 public class Const {
     public static final String TOPIC_ID = "topic_id";
     public final static String TOPIC_NAME = "topic_name";
+    public final static String TOPIC_PASS = "topic_pass";
+    public final static String TOPIC_NOTPASS = "topic_notpass";
     public final static String VOCA = "KEY_TYPE";
     public final static String ALARM_LIST_FAVORITE_HOUR = "alarm_hour";
     public final static String ALARM_LIST_FAVORITE_MINUTE = "alarm_minute";

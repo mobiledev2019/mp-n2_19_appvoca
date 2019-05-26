@@ -66,7 +66,7 @@ public class AdapterVoca extends BaseAdapter {
         vhc.tvvoca.setText(voca.getVocabulary());
         vhc.tvmean.setText(voca.getTranslate());
         if (VocaDetailsActivity.mPostion == position)
-            vhc.linearAdapter.setBackgroundColor(Color.YELLOW);
+            vhc.linearAdapter.setBackgroundColor(Color.parseColor("#fff176"));
         else
             vhc.linearAdapter.setBackgroundColor(Color.WHITE);
         vhc.linearAdapter.setOnClickListener(new View.OnClickListener() {
