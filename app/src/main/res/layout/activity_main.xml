@@ -16,13 +16,67 @@
         android:orientation="vertical"
         tools:context=".activity.MainActivity">
         <GridView
+            android:visibility="gone"
             android:id="@+id/gridview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp"
+            android:verticalSpacing="10dp"
             android:horizontalSpacing="10dp"
             android:layout_weight="1"
-            android:verticalSpacing="10dp" />
+            />
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="Chủ đề đã học"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Tổng số chủ đề "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Tổng số bài quiz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Số bài đạt mức 1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Số bài đạt mức 2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Số bài đạt mức 3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <View
+            android:background="#ff9800"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="2dp"/>
+        <GridView
+            android:id="@+id/gridview_faourite"
+            android:layout_weight="1"
+            android:numColumns="2"
+            android:padding="10dp"
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

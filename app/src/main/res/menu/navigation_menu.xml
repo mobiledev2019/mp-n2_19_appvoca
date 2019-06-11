@@ -2,27 +2,38 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/menu_topic"
-        android:title="@string/topic"
-        android:icon="@drawable/ic_topic"
-        />
+    <group android:id="@+id/a1">
+        <item
+            android:id="@+id/menu_topic"
+            android:title="@string/topic"
+            android:icon="@drawable/ic_topic"
+            />
+    </group>
 
-    <item
-        android:id="@+id/menu_favourite"
-        android:title="@string/favourite"
-        android:icon="@drawable/ic_favorite_navi"
-        />
 
-    <item
-        android:id="@+id/menu_remider_favourite"
-        android:title="@string/alarm_notice"
-        android:icon="@drawable/ic_alarm"
-        />
+    <group android:id="@+id/a2">
+        <item
+            android:id="@+id/menu_favourite"
+            android:title="@string/favourite"
+            android:icon="@drawable/ic_favorite_navi"
+            />
+    </group>
 
-    <item
-        android:icon="@drawable/ic_alarm"
-        android:title="@string/alarm_voca"
-        android:id="@+id/menu_reminder_voca"/>
+
+    <group android:id="@+id/a3">
+        <item
+            android:id="@+id/menu_remider_favourite"
+            android:title="@string/alarm_notice"
+            android:icon="@drawable/ic_alarm"
+            />
+    </group>
+
+    <group android:id="@+id/a4">
+        <item
+            android:icon="@drawable/ic_alarm"
+            android:title="@string/alarm_voca"
+            android:id="@+id/menu_reminder_voca"/>
+    </group>
+
 
 </menu>

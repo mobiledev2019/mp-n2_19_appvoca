@@ -39,7 +39,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    GridView gridView;
+    GridView gridView, gridViewFavourite;
     public static ConnectDataBase cdb;
     List<Topic> topicList;
     AdapterMainStatistic adapterTopic;
@@ -102,21 +102,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cdb = new ConnectDataBase(this);
-        try {
-            cdb.createDataBase();
-//            topicList = cdb.getListTopicFavourite();
-            topicList = cdb.getListTopicStatistical();
-            Log.d("LuyenDD", topicList.size()+"");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        adapterTopic = new AdapterMainStatistic(this, topicList);
-        gridView = findViewById(R.id.gridview);
-        gridView.setAdapter(adapterTopic);
-        adapterTopic.notifyDataSetChanged();
-
     }
 
     @Override
@@ -125,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         cdb = new ConnectDataBase(this);
         try {
             cdb.createDataBase();
-//            topicList = cdb.getListTopicFavourite();
             topicList = cdb.getListTopicStatistical();
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,6 +119,15 @@ public class MainActivity extends AppCompatActivity {
         gridView = findViewById(R.id.gridview);
         gridView.setAdapter(adapterTopic);
         adapterTopic.notifyDataSetChanged();
+
+        gridViewFavourite = findViewById(R.id.gridview_faourite);
+        try {
+            AdapterTopic adapterTopicFavourite = new AdapterTopic(this, cdb.getListTopicFavourite());
+            gridViewFavourite.setAdapter(adapterTopicFavourite);
+            adapterTopicFavourite.notifyDataSetChanged();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void settingTime() {
