@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.luyendd.learntoeic.obj.ResultTest;
 import com.luyendd.learntoeic.obj.Topic;
+import com.luyendd.learntoeic.obj.TopicStatistical;
 import com.luyendd.learntoeic.obj.Voca;
 
 import java.io.FileOutputStream;
@@ -106,18 +107,17 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
     }
 
-
     public List<Topic> getListTopic() throws SQLException {
         openDataBase();
         List<Topic> topicList = new ArrayList<>();
         String sql = "select * from topic";
         Cursor cursor = myDataBase.rawQuery(sql, null);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             topicList.add(new Topic(cursor.getInt(0),
                     cursor.getString(1), cursor.getString(2),
                     cursor.getInt(3), cursor.getInt(4),
-                    cursor.getInt(5)));
+                    cursor.getInt(5), cursor.getInt(6), cursor.getInt(7)));
 //
             cursor.moveToNext();
         }
@@ -132,12 +132,12 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         String sql = "select * from topic where favourite = 1";
         Cursor cursor = myDataBase.rawQuery(sql, null);
         cursor.moveToFirst();
-        Log.d("ABC", ""+ cursor.getColumnCount());
-        while (!cursor.isAfterLast()){
+        Log.d("ABC", "" + cursor.getColumnCount());
+        while (!cursor.isAfterLast()) {
             topicList.add(new Topic(cursor.getInt(0),
                     cursor.getString(1), cursor.getString(2),
                     cursor.getInt(3), cursor.getInt(4),
-                    cursor.getInt(5)));
+                    cursor.getInt(5), cursor.getInt(6), cursor.getInt(7)));
 //
             cursor.moveToNext();
         }
@@ -146,29 +146,18 @@ public class ConnectDataBase extends SQLiteOpenHelper {
 
     }
 
-    public void UpdateTopicFavourite(Topic topic) {
-        try {
-            openDataBase();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        ContentValues cv = new ContentValues();
-        cv.put("favourite", topic.getFavourite());
-        myDataBase.update("topic", cv, "id="+topic.getId(), null);
-        close();
-    }
-
     public List<Voca> getVocaFromTopic(int topic) throws SQLException {
         openDataBase();
         List<Voca> vocaList = new ArrayList<>();
         String sql = "select * from mytoeic600 where topic = " + topic;
         Cursor cursor = myDataBase.rawQuery(sql, null);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             vocaList.add(new Voca(cursor.getInt(0),
                     cursor.getInt(1), cursor.getInt(2), cursor.getString(3),
-                    cursor.getString(4),cursor.getString(5),cursor.getString(6)
-                    ,cursor.getString(7), cursor.getString(8), cursor.getInt(9)));
+                    cursor.getString(4), cursor.getString(5), cursor.getString(6)
+                    , cursor.getString(7), cursor.getString(8), cursor.getInt(9)
+                    , cursor.getInt(10)));
             cursor.moveToNext();
         }
         close();
@@ -182,11 +171,12 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         String sql = "select * from mytoeic600 where favourite = 1";
         Cursor cursor = myDataBase.rawQuery(sql, null);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             vocaList.add(new Voca(cursor.getInt(0),
                     cursor.getInt(1), cursor.getInt(2), cursor.getString(3),
-                    cursor.getString(4),cursor.getString(5),cursor.getString(6)
-                    ,cursor.getString(7), cursor.getString(8), cursor.getInt(9)));
+                    cursor.getString(4), cursor.getString(5), cursor.getString(6)
+                    , cursor.getString(7), cursor.getString(8), cursor.getInt(9)
+                    , cursor.getInt(10)));
             cursor.moveToNext();
         }
         close();
@@ -194,7 +184,7 @@ public class ConnectDataBase extends SQLiteOpenHelper {
 
     }
 
-    public Voca getVocaFromID(int id) throws SQLiteException{
+    public Voca getVocaFromID(int id) throws SQLiteException {
         try {
             openDataBase();
         } catch (SQLException e) {
@@ -205,8 +195,9 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         cursor.moveToFirst();
         Voca voca = new Voca(cursor.getInt(0),
                 cursor.getInt(1), cursor.getInt(2), cursor.getString(3),
-                cursor.getString(4),cursor.getString(5),cursor.getString(6)
-                ,cursor.getString(7), cursor.getString(8), cursor.getInt(9));
+                cursor.getString(4), cursor.getString(5), cursor.getString(6)
+                , cursor.getString(7), cursor.getString(8), cursor.getInt(9),
+                cursor.getInt(10));
         close();
         return voca;
     }
@@ -231,7 +222,7 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         return result;
     }
 
-    public List<ResultTest> getListResultByTopic (int topic) {
+    public List<ResultTest> getListResultByTopic(int topic) {
         try {
             openDataBase();
         } catch (SQLException e) {
@@ -244,7 +235,7 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             resultTestList.add(new ResultTest(cursor.getInt(0),
-                    cursor.getInt(1),cursor.getInt(2),cursor.getInt(3),
+                    cursor.getInt(1), cursor.getInt(2), cursor.getInt(3),
                     cursor.getString(4)));
             cursor.moveToNext();
         }
@@ -262,7 +253,8 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         }
         ContentValues cv = new ContentValues();
         cv.put("favourite", voca.getFavorite());
-        myDataBase.update("mytoeic600", cv, "id="+voca.getId(), null);
+        cv.put("is_active", voca.getIsActive());
+        myDataBase.update("mytoeic600", cv, "id=" + voca.getId(), null);
         close();
     }
 
@@ -276,30 +268,31 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         String sql = "select * from mytoeic600 ORDER BY RANDOM() LIMIT 20";
         Cursor cursor = myDataBase.rawQuery(sql, null);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             vocaList.add(new Voca(cursor.getInt(0),
                     cursor.getInt(1), cursor.getInt(2), cursor.getString(3),
-                    cursor.getString(4),cursor.getString(5),cursor.getString(6)
-                    ,cursor.getString(7), cursor.getString(8), cursor.getInt(9)));
+                    cursor.getString(4), cursor.getString(5), cursor.getString(6)
+                    , cursor.getString(7), cursor.getString(8), cursor.getInt(9),
+                    cursor.getInt(10)));
             cursor.moveToNext();
         }
         close();
         return vocaList;
     }
 
-    public List<Topic> getListTopicStatistical(){
-        List<Topic> topics = new ArrayList<>();
+    public List<TopicStatistical> getListTopicStatistical() {
+        List<TopicStatistical> topics = new ArrayList<>();
         try {
             openDataBase();
             String sql = "select * from topic order by favourite DESC";
             Cursor cursor = myDataBase.rawQuery(sql, null);
             cursor.moveToFirst();
-            Log.d("ABC", ""+ cursor.getColumnCount());
-            while (!cursor.isAfterLast()){
-                topics.add(new Topic(cursor.getInt(0),
+            while (!cursor.isAfterLast()) {
+                topics.add(new TopicStatistical(cursor.getInt(0),
                         cursor.getString(1), cursor.getString(2),
                         cursor.getInt(3), cursor.getInt(4),
-                        cursor.getInt(5)));
+                        cursor.getInt(5), cursor.getInt(6), cursor.getInt(7),
+                        getVocaActiceByTopic(cursor.getInt(0))));
                 cursor.moveToNext();
             }
             close();
@@ -309,37 +302,117 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         return topics;
     }
 
-    public void UpdateTopicStatistical(Topic topic) {
+    public void UpdateTopic(Topic topic) {
         try {
             openDataBase();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         ContentValues cv = new ContentValues();
-        cv.put("pass", topic.getPass());
-        cv.put("not_pass", topic.getNotPass());
+        cv.put("level_1", topic.getLevel1());
+        cv.put("level_2", topic.getLevel2());
+        cv.put("level_3", topic.getLevel3());
+        cv.put("favourite", topic.getFavourite());
+        cv.put("is_active", topic.getIsActive());
 
-        myDataBase.update("topic", cv, "id="+topic.getId(), null);
+        myDataBase.update("topic", cv, "id=" + topic.getId(), null);
         close();
     }
 
     public Topic getTopicById(int _id) throws SQLException {
         openDataBase();
         Topic topic = null;
-        String sql = "select * from topic where id = '" + _id + "'" ;
+        String sql = "select * from topic where id = '" + _id + "'";
         Cursor cursor = myDataBase.rawQuery(sql, null);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             topic = new Topic(cursor.getInt(0),
                     cursor.getString(1), cursor.getString(2),
                     cursor.getInt(3), cursor.getInt(4),
-                    cursor.getInt(5));
+                    cursor.getInt(5), cursor.getInt(6), cursor.getInt(7));
 //
             cursor.moveToNext();
         }
         close();
         return topic;
     }
+
+    public int getNumberTopicActive() {
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        int nombr = 0;
+        Cursor cursor = myDataBase.rawQuery("SELECT *  FROM topic WHERE is_active = 1", null);
+        nombr = cursor.getCount();
+        return nombr;
+    }
+
+    public int getTotalLevel1() {
+        int sum = 0;
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String sumQuery = String.format("SELECT SUM(%s) as Total FROM topic", "level_1");
+        Cursor cursor = myDataBase.rawQuery(sumQuery, null);
+        if (cursor.moveToFirst())
+            sum = cursor.getInt(cursor.getColumnIndex("Total"));
+        return sum;
+
+    }
+
+    public int getTotalLevel2() {
+        int sum = 0;
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String sumQuery = String.format("SELECT SUM(%s) as Total FROM topic", "level_2");
+        Cursor cursor = myDataBase.rawQuery(sumQuery, null);
+        if (cursor.moveToFirst())
+            sum = cursor.getInt(cursor.getColumnIndex("Total"));
+        return sum;
+
+    }
+
+    public int getTotalLevel3() {
+        int sum = 0;
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String sumQuery = String.format("SELECT SUM(%s) as Total FROM topic", "level_3");
+        Cursor cursor = myDataBase.rawQuery(sumQuery, null);
+        if (cursor.moveToFirst())
+            sum = cursor.getInt(cursor.getColumnIndex("Total"));
+        return sum;
+
+    }
+
+    public String getVocaActiceByTopic(int topicId) {
+        int num = 0, total = 0;
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String countSql = "SELECT * FROM mytoeic600"
+                +" WHERE is_active = 1 AND topic = " + topicId ;
+        String totalSql = "SELECT * FROM mytoeic600 WHERE topic = " + topicId;
+        Cursor cursor = myDataBase.rawQuery(countSql, null);
+        Cursor cursor1 = myDataBase.rawQuery(totalSql, null);
+        num = cursor.getCount();
+        total = cursor1.getCount();
+
+        String result = num + "/" + total;
+        return result;
+    }
+
 
 
 }

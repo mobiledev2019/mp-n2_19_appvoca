@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.activity.MainActivity;
 import com.luyendd.learntoeic.activity.VocaDetailsActivity;
@@ -75,6 +76,7 @@ public class AdapterVoca extends BaseAdapter {
                 VocaDetailsActivity.listView.setVisibility(View.GONE);
                 VocaDetailsActivity.mPostion = position;
                 VocaDetailsActivity.viewPager.setCurrentItem(position);
+
             }
         });
 

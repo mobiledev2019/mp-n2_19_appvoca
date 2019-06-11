@@ -27,7 +27,7 @@ import java.util.Random;
 
 public class QuizActivity extends AppCompatActivity implements View.OnClickListener {
 
-    int topic_id = 1, pass = 0, notPass = 0;
+    int topic_id = 1, level1 = 0, level2 = 0, level3 = 0;
     Topic topic;
     private final String TAG = "QuizActivity";
     List<VocaQuiz> vocaQuizs = new ArrayList<>();
@@ -57,8 +57,9 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 vocaList = connectDataBase.getVocaFromTopic(topic_id);
             }
             topic = connectDataBase.getTopicById(topic_id);
-            pass = topic.getPass();
-            notPass = topic.getNotPass();
+            level1 = topic.getLevel1();
+            level2 = topic.getLevel2();
+            level3 = topic.getLevel3();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -203,20 +204,20 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /*
-     * Neu dung > 49% la pass => update pass = pass+1 vao table topic
-     * else khong pass => update not_pass = notpass + 1 vao table topic
-     * */
+
     private void updateStatistic() {
         double temp = numCorrect * 1.0 / vocaQuizs.size();
-        if (temp > 0.49) {
-            pass += 1;
+        if (temp < 0.4) {
+            level1 += 1;
+        } else if (  temp < 0.7 && temp >= 0.4){
+            level2 += 1;
         } else {
-            notPass += 1;
+            level3 += 1;
         }
-        topic.setPass(pass);
-        topic.setNotPass(notPass);
-        connectDataBase.UpdateTopicStatistical(topic);
+        topic.setLevel1(level1);
+        topic.setLevel2(level2);
+        topic.setLevel3(level3);
+        connectDataBase.UpdateTopic(topic);
         boolean isInsert = connectDataBase.insertResultData(new ResultTest(topic_id, numCorrect, vocaQuizs.size()));
         Log.d(TAG, "[Insert] : " + isInsert);
         Intent i = new Intent(QuizActivity.this, StatisticResultTestActivity.class);

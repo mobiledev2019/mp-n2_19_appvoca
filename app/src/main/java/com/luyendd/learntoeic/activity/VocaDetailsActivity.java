@@ -84,6 +84,13 @@ public class VocaDetailsActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 Log.d(TAG, "[position] : " + position);
                 mPostion = position;
+                Voca voca = vocaList.get(position);
+                Log.d(TAG, "[Voca is active]:" + voca.getIsActive());
+                if (voca.getIsActive() != 1) {
+                    Log.d(TAG, "[viewpager] : update voca actice");
+                    voca.setIsActive(1);
+                    connectDataBase.UpdateVoca(voca);
+                }
             }
 
             @Override

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -20,13 +21,14 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.R;
-import com.luyendd.learntoeic.adapter.AdapterMainStatistic;
 import com.luyendd.learntoeic.adapter.AdapterTopic;
 import com.luyendd.learntoeic.obj.Topic;
 import com.luyendd.learntoeic.utils.AlarmUtil;
@@ -34,23 +36,31 @@ import com.luyendd.learntoeic.utils.Const;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import lecho.lib.hellocharts.model.PieChartData;
+import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.view.PieChartView;
 
 public class MainActivity extends AppCompatActivity {
 
     GridView gridView, gridViewFavourite;
+    int numTopicActive = 0, numLevel1 = 0, numLevel2 = 0, numLevel3 = 0;
     public static ConnectDataBase cdb;
     List<Topic> topicList;
-    AdapterMainStatistic adapterTopic;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-    private DrawerLayout dl;
-    private ActionBarDrawerToggle t;
-    private NavigationView nv;
+    PieChartView pieChartTopic, pieChartQuiz;
+    LinearLayout linearStatistical;
+    DrawerLayout dl;
+    ActionBarDrawerToggle t;
+    NavigationView nv;
     final String TAG = "MainActivity";
-
+    TextView tvLevel1, tvLevel2, tvLevel3, tvTotalQuiz, tvTopicActive, tvSizeTopic;
+    List<SliceValue> pieDataQuiz, pieDataTopic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,10 +108,30 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         return true;
                 }
-
             }
         });
 
+        tvLevel1 = findViewById(R.id.tv_level1);
+        tvLevel2 = findViewById(R.id.tv_level2);
+        tvLevel3 = findViewById(R.id.tv_level3);
+        tvTotalQuiz = findViewById(R.id.tv_total_quiz);
+        tvTopicActive = findViewById(R.id.tv_num_topic_active);
+        tvSizeTopic = findViewById(R.id.tv_num_size_topic);
+        pieChartQuiz = findViewById(R.id.chart_quiz);
+        pieChartTopic = findViewById(R.id.chart_topic);
+
+        pieDataQuiz = new ArrayList<>();
+        pieDataTopic = new ArrayList<>();
+
+
+        linearStatistical = findViewById(R.id.linear_statistical);
+        linearStatistical.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,
+                        DetailStatisticalActivity.class));
+            }
+        });
     }
 
     @Override
@@ -110,15 +140,15 @@ public class MainActivity extends AppCompatActivity {
         cdb = new ConnectDataBase(this);
         try {
             cdb.createDataBase();
-            topicList = cdb.getListTopicStatistical();
+//            topicList = cdb.getListTopicStatistical();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        adapterTopic = new AdapterMainStatistic(this, topicList);
-        gridView = findViewById(R.id.gridview);
-        gridView.setAdapter(adapterTopic);
-        adapterTopic.notifyDataSetChanged();
+//        adapterTopic = new AdapterDetailStatistic(this, topicList);
+//        gridView = findViewById(R.id.gridview);
+//        gridView.setAdapter(adapterTopic);
+//        adapterTopic.notifyDataSetChanged();
 
         gridViewFavourite = findViewById(R.id.gridview_faourite);
         try {
@@ -128,6 +158,61 @@ public class MainActivity extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                pieDataQuiz.clear();
+                pieDataTopic.clear();
+                numTopicActive = cdb.getNumberTopicActive();
+                numLevel1 = cdb.getTotalLevel1();
+                numLevel2 = cdb.getTotalLevel2();
+                numLevel3 = cdb.getTotalLevel3();
+                Log.d("NumTopic", "/././" + numTopicActive);
+                Log.d("NumLeve1", "/././" + numLevel1);
+                Log.d("NumLeve2", "/././" + numLevel2);
+                Log.d("NumLeve3", "/././" + numLevel3);
+
+                try {
+                    int percentActiceTopic = Math.round(numTopicActive * 1.0f/ cdb.getListTopic().size() * 100);
+                    pieDataTopic.add(new SliceValue(percentActiceTopic, Color.GREEN).setLabel(percentActiceTopic + "%"));
+                    pieDataTopic.add(new SliceValue((100 - percentActiceTopic), Color.RED).setLabel((100 - percentActiceTopic) + "%"));
+                    PieChartData pieChartData = new PieChartData(pieDataTopic);
+                    pieChartData.setHasLabels(true);
+                    pieChartTopic.setPieChartData(pieChartData);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
+                tvLevel1.setText(numLevel1 + "");
+                tvLevel2.setText(numLevel2 + "");
+                tvLevel3.setText(numLevel3 + "");
+                int totalQuiz = numLevel1 + numLevel2 + numLevel3;
+                int percentLevel1 = Math.round(numLevel1 * 1.0f/ totalQuiz * 100);
+                int percentLevel2 = Math.round(numLevel2 * 1.0f/ totalQuiz * 100);
+                int percentLevel3 = 100 - percentLevel1 - percentLevel2;
+                pieDataQuiz.add(new SliceValue(percentLevel1, Color.RED).setLabel(percentLevel1 + "%"));
+                pieDataQuiz.add(new SliceValue(percentLevel2, Color.YELLOW).setLabel(percentLevel2 + "%"));
+                pieDataQuiz.add(new SliceValue(percentLevel3, Color.GREEN).setLabel(percentLevel3 + "%"));
+
+                PieChartData pieChartDataQuiz = new PieChartData(pieDataQuiz);
+                pieChartDataQuiz.setHasLabels(true);
+                pieChartQuiz.setPieChartData(pieChartDataQuiz);
+
+                tvTotalQuiz.setText(totalQuiz + "");
+                tvTopicActive.setText(numTopicActive + "");
+                try {
+                    tvSizeTopic.setText(cdb.getListTopic().size() + "");
+                    Log.d("NumVocaActiceTopic: ", cdb.getVocaActiceByTopic(1) + "");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
     }
 
     private void settingTime() {

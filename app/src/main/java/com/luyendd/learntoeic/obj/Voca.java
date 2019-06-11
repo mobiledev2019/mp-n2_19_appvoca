@@ -8,10 +8,11 @@ public class Voca implements Serializable {
 
     private String vocabulary, vocalization, explaination, translate, exmaple, exmample_translate;
 
-    private int favorite;
+    private int favorite, isActive;
 
     public Voca(int id, int topic, int id_temp, String vocabulary, String vocalization,
-                String explaination, String translate, String exmaple, String exmample_translate, int favorite) {
+                String explaination, String translate, String exmaple, String exmample_translate,
+                int favorite, int isActive) {
         this.id = id;
         this.topic = topic;
         this.id_temp = id_temp;
@@ -22,6 +23,7 @@ public class Voca implements Serializable {
         this.exmaple = exmaple;
         this.exmample_translate = exmample_translate;
         this.favorite = favorite;
+        this.isActive = isActive;
     }
 
     public Voca(int id, String vocalization){
@@ -110,4 +112,13 @@ public class Voca implements Serializable {
     public void setFavorite(int favorite) {
         this.favorite = favorite;
     }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
 }

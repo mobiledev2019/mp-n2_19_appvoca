@@ -2,10 +2,6 @@ package com.luyendd.learntoeic.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,18 +18,18 @@ import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.activity.VocaDetailsActivity;
 import com.luyendd.learntoeic.obj.Topic;
+import com.luyendd.learntoeic.obj.TopicStatistical;
 import com.luyendd.learntoeic.utils.Const;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-public class AdapterTopic extends BaseAdapter {
+public class AdapterDetailStatistic extends BaseAdapter {
+
     Context context;
-    List<Topic> topicList;
+    List<TopicStatistical> topicList;
     ViewHolderTopic vht;
     private ConnectDataBase cdb;
-    public AdapterTopic(Context context, List<Topic> topicList){
+    public AdapterDetailStatistic(Context context, List<TopicStatistical> topicList){
         this.context = context;
         this.topicList = topicList;
         cdb = new ConnectDataBase(context);
@@ -44,7 +41,7 @@ public class AdapterTopic extends BaseAdapter {
     }
 
     @Override
-    public Topic getItem(int position) {
+    public TopicStatistical getItem(int position) {
         return topicList.get(position);
     }
 
@@ -58,17 +55,24 @@ public class AdapterTopic extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater vi =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = vi.inflate(R.layout.adapter_topic, null);
+            convertView = vi.inflate(R.layout.adapter_main_statistic, null);
             vht = new ViewHolderTopic();
             vht.btnFavorite = convertView.findViewById(R.id.btnFavorite);
             vht.iv = convertView.findViewById(R.id.imageViewTopic);
             vht.tv = convertView.findViewById(R.id.textViewTopic);
+            vht.tvPass = convertView.findViewById(R.id.tv_pass);
+            vht.tvNotPass = convertView.findViewById(R.id.tv_not_pass);
+            vht.mProgress = convertView.findViewById(R.id.pb_media_progress);
+            vht.tvLevel1 = convertView.findViewById(R.id.tv_quiz_level1);
+            vht.tvLevel2 = convertView.findViewById(R.id.tv_quiz_level2);
+            vht.tvLevel3 = convertView.findViewById(R.id.tv_quiz_level3);
+            vht.tvTotalQuiz = convertView.findViewById(R.id.tv_total_quiz);
             convertView.setTag(vht);
         }else{
             vht = (ViewHolderTopic) convertView.getTag();
         }
 
-        final Topic topic = topicList.get(position);
+        final TopicStatistical topic = topicList.get(position);
         RequestOptions options = new RequestOptions();
         options.centerCrop();
         options.fitCenter();
@@ -87,60 +91,37 @@ public class AdapterTopic extends BaseAdapter {
             vht.btnFavorite.setBackground(context.getDrawable(R.drawable.ic_not_favorite));
         }
 
-        vht.btnFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (topic.getFavourite() == 1) {
-                    topic.setFavourite(0);
-                    cdb.UpdateTopic(topic);
-                }else {
-                    topic.setFavourite(1);
-                    cdb.UpdateTopic(topic);
-                }
-                //Cap nhat ui
-                notifyDataSetChanged();
 
-            }
-        });
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("ABC", "convertView_ONCLICK");
-                if (topic.getIsActive() != 1) {
-                    Log.d("ABC", "[Update Topic Active]");
-                    topic.setIsActive(1);
-                    cdb.UpdateTopic(topic);
-                }
 
-                Intent i = new Intent(context, VocaDetailsActivity.class);
-                i.putExtra(Const.TOPIC_ID, topic.getId());
-                i.putExtra(Const.TOPIC_NAME, topic.getTranslate());
-                context.startActivity(i);
-            }
-        });
-        Log.d("ABC", "[TAG]" + topic.getTranslate() + "isActive: " +
-                topic.getIsActive() + "...." + topic.getLevel1() + "///"
-                + topic.getLevel2() + "///" + topic.getLevel3());
+        vht.tvPass.setText("Pass: " + topic.getLevel1() + "----" + topic.getLevel2() + "----" + topic.getLevel3());
+        vht.tvLevel1.setText("Mức 1: " + topic.getLevel1() );
+        vht.tvLevel2.setText("Mức 2: " + topic.getLevel2() );
+        vht.tvLevel3.setText("Mức 3: " + topic.getLevel3() );
+        int totalQuiz = topic.getLevel1() + topic.getLevel2() + topic.getLevel3();
+        vht.tvTotalQuiz.setText("Tổng số bài quiz: " + totalQuiz );
+
+        vht.tvNotPass.setText("Số từ đã học: " + topic.getLearnPerTotal());
+        handleShowProcessPercent(vht.mProgress, topic.getLearnPerTotal());
         return convertView;
     }
 
     public class ViewHolderTopic{
         ImageView iv;
-        TextView tv;
+        TextView tv, tvPass, tvNotPass, tvLevel1, tvLevel2, tvLevel3, tvTotalQuiz;
         Button btnFavorite;
+        ProgressBar mProgress;
     }
 
-    public BitmapDrawable getBitmapFromAssets(String fileName) {
-        AssetManager assetManager = context.getAssets();
+    private void handleShowProcessPercent(ProgressBar progressBar, String learnPerTotal){
+        int lenght = learnPerTotal.length();
+        int learn = Integer.parseInt(learnPerTotal.substring(0, learnPerTotal.indexOf("/")));
+        int total = Integer.parseInt(learnPerTotal.substring(learnPerTotal.indexOf("/") + 1, lenght));
 
-        InputStream istr = null;
-        try {
-            istr = assetManager.open(fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Bitmap bitmap = BitmapFactory.decodeStream(istr);
+        float process = Math.round(learn * 1.0 * 100 / total);
+        progressBar.setProgress((int)Math.round(process));
 
-        return new BitmapDrawable(context.getResources(), bitmap);
     }
+
+
+
 }

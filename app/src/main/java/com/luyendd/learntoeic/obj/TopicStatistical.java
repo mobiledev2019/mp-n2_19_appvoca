@@ -1,17 +1,26 @@
 package com.luyendd.learntoeic.obj;
 
-public class Topic {
+public class TopicStatistical {
     private int id;
+
     private String name;
+
     private String translate;
+
     private int favourite;
+
     private int level1;
+
     private int level2;
+
     private int level3;
+
     private int isActive;
 
+    private String learnPerTotal;
 
-    public Topic(int id, String name, String translate, int favourite, int level1, int level2, int level3, int isActive) {
+    public TopicStatistical(int id, String name, String translate, int favourite, int level1,
+                            int level2, int level3, int isActive, String learnPerTotal) {
         this.id = id;
         this.name = name;
         this.translate = translate;
@@ -20,6 +29,7 @@ public class Topic {
         this.level2 = level2;
         this.level3 = level3;
         this.isActive = isActive;
+        this.learnPerTotal = learnPerTotal;
     }
 
     public int getId() {
@@ -84,5 +94,13 @@ public class Topic {
 
     public void setIsActive(int isActive) {
         this.isActive = isActive;
+    }
+
+    public String getLearnPerTotal() {
+        return learnPerTotal;
+    }
+
+    public void setLearnPerTotal(String learnPerTotal) {
+        this.learnPerTotal = learnPerTotal;
     }
 }
