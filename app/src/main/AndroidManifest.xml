@@ -18,7 +18,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activity.DetailStatisticalActivity"></activity>
         <activity android:name=".activity.TopicActivity" />
-        <activity android:name=".activity.SettingTimeActivity" />
         <activity android:name=".activity.StatisticResultTestActivity" />
         <activity android:name=".activity.QuizActivity" />
         <activity android:name=".activity.VocaDetailsActivity" />

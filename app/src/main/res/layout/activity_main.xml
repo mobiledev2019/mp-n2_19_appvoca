@@ -250,6 +250,7 @@
             </LinearLayout>
 
         </LinearLayout>
+
         <View
             android:background="#ff9800"
             android:layout_width="match_parent"

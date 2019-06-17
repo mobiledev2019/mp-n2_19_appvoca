@@ -44,8 +44,12 @@ import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
 
+/**
+ * Chức năng thống kê, và hiển thị chủ đề yêu thích yêu thích
+ */
 public class MainActivity extends AppCompatActivity {
 
+    //
     GridView gridView, gridViewFavourite;
     int numTopicActive = 0, numLevel1 = 0, numLevel2 = 0, numLevel3 = 0;
     public static ConnectDataBase cdb;
