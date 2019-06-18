@@ -101,7 +101,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setQuestion() {
-
+        //luu dl quiz
         isAnswer = false;
 
         tvAnswer1.setBackgroundColor(Color.parseColor("#20bdbdbd"));
@@ -158,15 +158,15 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         while (fourthPos == secondPos || fourthPos == thirdPos || fourthPos == firstPos) {
             fourthPos = random.nextInt(vocaQuizs.size());
         }
-
+        //them 4 đ/a vap list
         vocaAnswerList.add(vocaQuizs.get(firstPos));
         vocaAnswerList.add(vocaQuizs.get(secondPos));
         vocaAnswerList.add(vocaQuizs.get(thirdPos));
         vocaAnswerList.add(vocaQuizs.get(fourthPos));
         Log.d(TAG, firstPos + "/" + secondPos + "/" + thirdPos + "/" + fourthPos);
-
+        //tron dap an ngau nhien
         Collections.shuffle(vocaAnswerList);
-
+        //set gia tri hien thi
         tvAnswer1.setText(vocaAnswerList.get(0).getTranslate());
         tvAnswer2.setText(vocaAnswerList.get(1).getTranslate());
         tvAnswer3.setText(vocaAnswerList.get(2).getTranslate());

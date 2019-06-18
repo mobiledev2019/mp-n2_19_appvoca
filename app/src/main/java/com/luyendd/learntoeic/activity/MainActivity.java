@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 //        gridView.setAdapter(adapterTopic);
 //        adapterTopic.notifyDataSetChanged();
 
-        gridViewFavourite = findViewById(R.id.gridview_faourite);
+        gridViewFavourite = findViewById(R.id.gridview_faourite);//lay ra chu de yeu thich
         try {
             AdapterTopic adapterTopicFavourite = new AdapterTopic(this, cdb.getListTopicFavourite());
             gridViewFavourite.setAdapter(adapterTopicFavourite);
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-
+                //thong ke chu de
                 pieDataQuiz.clear();
                 pieDataTopic.clear();
                 numTopicActive = cdb.getNumberTopicActive();
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-
+                //thong ke quz
                 tvLevel1.setText(numLevel1 + "");
                 tvLevel2.setText(numLevel2 + "");
                 tvLevel3.setText(numLevel3 + "");

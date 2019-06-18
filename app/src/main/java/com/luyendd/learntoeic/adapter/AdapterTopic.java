@@ -55,6 +55,7 @@ public class AdapterTopic extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        //anh xa ra view
         if (convertView == null) {
             LayoutInflater vi =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -68,6 +69,7 @@ public class AdapterTopic extends BaseAdapter {
             vht = (ViewHolderTopic) convertView.getTag();
         }
 
+        //load hinh anh dung Tv glide
         final Topic topic = topicList.get(position);
         RequestOptions options = new RequestOptions();
         options.centerCrop();
@@ -78,7 +80,7 @@ public class AdapterTopic extends BaseAdapter {
                                 .replace(" ", "_") + ".jpg")
                 .apply(options).into(vht.iv);
 
-        vht.tv.setText(topic.getTranslate());
+        vht.tv.setText(topic.getTranslate());//set text tieu de
 
 
         if (topic.getFavourite() == 1 ){
@@ -102,6 +104,7 @@ public class AdapterTopic extends BaseAdapter {
 
             }
         });
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
