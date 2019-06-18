@@ -1,7 +1,5 @@
-# mp-n2_19_appvoca
-mp-n2_19_appvoca created by GitHub Classroom
-# android_19_learn_vocabolary
 
+# android_19_learn_vocabolary
 
 
 BÁO CÁO BÀI TẬP LỚN MÔN PHÁT TRIỂN ỨNG DỤNG CHO CÁC THIẾT BỊ DI ĐỘNG HỌC KỲ II NĂM HỌC 2018 - 2019
